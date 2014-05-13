@@ -51,6 +51,13 @@ var FeedHelper = {
   feedToItems: function(parsedFeed) {
     let items = [];
 
+    // Create a browser element to create HTML from summary text
+    let browser = document.createElement("browser");
+    browser.setAttribute("type", "content");
+    browser.setAttribute("collapsed", "true");
+    browser.setAttribute("disablehistory", "true");
+    document.documentElement.appendChild(browser);
+
     for (let i = 0; i < parsedFeed.items.length; i++) {
       let entry = parsedFeed.items.queryElementAt(i, Ci.nsIFeedEntry);
       entry.QueryInterface(Ci.nsIFeedContainer);
@@ -82,12 +89,6 @@ var FeedHelper = {
 
       // Try to find an image in the summary
       if (!item.image_url) {
-        let browser = document.createElement("browser");
-        browser.setAttribute("type", "content");
-        browser.setAttribute("collapsed", "true");
-        browser.setAttribute("disablehistory", "true");
-        document.documentElement.appendChild(browser);
-
         let doc = browser.contentDocument;
         let div = doc.createElement("div");
         div.innerHTML = entry.summary.text;
@@ -95,12 +96,13 @@ var FeedHelper = {
         if (img) {
           item.image_url = img.src;
         }
-
-        browser.parentNode.removeChild(browser);
       }
-
       items.push(item);
     }
+
+    // Clean up the browser element
+    browser.parentNode.removeChild(browser);
+
     return items;
   }
 };

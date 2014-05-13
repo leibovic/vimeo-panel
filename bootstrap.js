@@ -19,6 +19,9 @@ XPCOMUtils.defineLazyGetter(this, "Strings", function() {
 
 XPCOMUtils.defineLazyGetter(this, "FeedHelper", function() {
   let win = Services.wm.getMostRecentWindow("navigator:browser");
+  if (win.FeedHelper) {
+    return FeedHelper;
+  }
   Services.scriptloader.loadSubScript("chrome://vimeopanel/content/FeedHelper.js", win);
   return win["FeedHelper"];
 });
